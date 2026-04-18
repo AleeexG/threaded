@@ -45,6 +45,8 @@
         </svg>
         Profile
     </a>
+    
+    <button class="darkModeToggle"> 🌙 Night </button>
 </div>
 
 <div class="navbar">
@@ -57,6 +59,36 @@
         <a href="my-orders.html">My Orders</a>
         <a href="messages-list.html">Messages</a>
         <a href="profile.html">Profile</a>
+
+        <button id = "darkModeToggle" class = "darkModeToggle"> 🌙 Night </button>
+
+        <script>
+            const buttons = document.querySelectorAll('#darkModeToggle, .darkModeToggle');
+            let isNight = true;
+            for (let i = 0; i < buttons.length; i++) {
+            buttons[i].addEventListener('click', function () {
+                if (isNight){
+                    isNight = false
+                }else {
+                    isNight = true
+                }
+                
+                if (isNight) {
+                    document.body.classList.add('dark-mode');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                }
+
+                for (let j = 0; j < buttons.length; j++) {
+                    if (isNight) {
+                        buttons[j].textContent = '🌙 Night';
+                    } else {
+                        buttons[j].textContent = '☀️ Day';
+                    }
+                }
+            });
+        }
+            </script>
 
         <div class="cart-wrapper" onclick="window.location.href='cart.html'">
             <svg class="basket-icon" width="24" height="24" viewBox="0 0 24 24">
