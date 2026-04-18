@@ -26,7 +26,7 @@ public class OrderService {
     }
 
     @Transactional
-    public void createOrdersFromCart(User user) {
+    public void createOrdersFromCart(User user, String address) {
         List<CartItem> items = cartItemRepository.findByUserId(user.getId());
 
         for (CartItem item : items) {
@@ -38,6 +38,7 @@ public class OrderService {
             order.setPriceAtPurchase(listing.getPrice().doubleValue());
             order.setCreatedAt(LocalDateTime.now());
             order.setStatus(OrderStatus.PAID);
+            order.setAddress(address);
             orderRepository.save(order);
 
             listing.setListingStatus(ListingStatus.SOLD);

@@ -7,6 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
             background: #fafafa;
@@ -107,6 +111,44 @@
             color: #ff7ebf;
             margin-top: 80px;
         }
+
+        .address-section {
+            margin-top: 30px;
+            padding: 20px;
+            border: 2px solid black;
+            border-radius: 10px;
+        }
+
+        .address-section h3 {
+            margin-top: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .address-field {
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            font-size: 16px;
+            border: 2px solid black;
+            border-radius: 8px;
+        }
+
+        .address-row {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .address-row .address-field {
+            flex: 1;
+        }
+
+        @media (max-width: 600px) {
+            .address-row {
+                flex-direction: column;
+            }
+        }
     </style>
     <link rel="stylesheet" href="/responsive.css">
 
@@ -119,10 +161,57 @@
     <h2>Your Cart</h2>
     <div id="cartItems"></div>
     <div id="total" class="total"></div>
+
+    <div class="address-section">
+        <h3>Delivery Address</h3>
+
+        <input id="fullName" class="address-field" type="text" placeholder="Full Name">
+        <input id="line1" class="address-field" type="text" placeholder="Address Line 1">
+        <input id="line2" class="address-field" type="text" placeholder="Address Line 2 (optional)">
+
+        <div class="address-row">
+            <input id="city" class="address-field" type="text" placeholder="City">
+            <input id="postcode" class="address-field" type="text" placeholder="Postcode">
+        </div>
+    </div>
+
     <button id="checkoutBtn" class="checkout-btn" onclick="checkout()">Checkout</button>
 </div>
 
 <script>
+let dark = localStorage.getItem("darkMode") === "true";
+
+function applyDarkModeState() {
+    document.body.classList.toggle("dark-mode", dark);
+    updateIcons(dark);
+}
+
+function updateIcons(isDark) {
+    const desktopIcon = document.getElementById("desktopIcon");
+    const mobileIcon = document.getElementById("mobileIcon");
+    const desktopText = document.querySelector("#darkToggleDesktop span");
+
+    if (!desktopIcon || !mobileIcon || !desktopText) return;
+
+    if (isDark) {
+        desktopIcon.innerHTML =
+            '<path d="M12 4V2M12 22v-2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12H4M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/><circle cx="12" cy="12" r="5"/>';
+        mobileIcon.innerHTML = desktopIcon.innerHTML;
+        desktopText.textContent = "Day";
+    } else {
+        desktopIcon.innerHTML =
+            '<path d="M21 12.79A9 9 0 0111.21 3 7 7 0 1019 14.79z"/>';
+        mobileIcon.innerHTML = desktopIcon.innerHTML;
+        desktopText.textContent = "Night";
+    }
+}
+
+function toggleDark() {
+    dark = !dark;
+    localStorage.setItem("darkMode", dark);
+    applyDarkModeState();
+}
+
 async function loadNavbar() {
     const nav = document.getElementById("navbar");
     nav.style.display = "none";
@@ -133,6 +222,8 @@ async function loadNavbar() {
     nav.innerHTML = html;
     nav.style.display = "block";
 
+    applyDarkModeState();
+
     const h = document.getElementById("hamburger");
     if (h) {
         h.addEventListener("click", () => {
@@ -140,6 +231,12 @@ async function loadNavbar() {
             m.classList.toggle("open");
         });
     }
+
+    const desktopBtn = document.getElementById("darkToggleDesktop");
+    const mobileBtn = document.getElementById("darkToggleMobile");
+
+    if (desktopBtn) desktopBtn.onclick = toggleDark;
+    if (mobileBtn) mobileBtn.onclick = toggleDark;
 
     updateCartBadgeBackend();
 }
@@ -223,9 +320,19 @@ async function removeItem(listingId) {
 }
 
 async function checkout() {
+    const fullName = document.getElementById("fullName").value;
+    const line1 = document.getElementById("line1").value;
+    const line2 = document.getElementById("line2").value;
+    const city = document.getElementById("city").value;
+    const postcode = document.getElementById("postcode").value;
+
+    const address = `${fullName}, ${line1}${line2 ? ", " + line2 : ""}, ${city}, ${postcode}`;
+
     await fetch("/api/orders/checkout", {
         method: "POST",
-        credentials: "include"
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ address })
     });
 
     updateCartBadgeBackend();

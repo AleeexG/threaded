@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.List;
 
 @RestController
@@ -24,10 +25,11 @@ public class OrderController {
     }
 
     @PostMapping("/checkout")
-    public ResponseEntity<ApiResponse<Void>> checkout(HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<Void>> checkout(@RequestBody Map<String, String> body, HttpServletRequest request) {
         User user = sessionService.getUser(request);
         if (user == null) return ResponseEntity.status(401).body(new ApiResponse<>(false, "User not found", null));
-        orderService.createOrdersFromCart(user);
+        String address = body.get("address");
+        orderService.createOrdersFromCart(user, address);
         return ResponseEntity.ok(new ApiResponse<>(true, "Checkout complete", null));
     }
 

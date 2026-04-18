@@ -192,6 +192,39 @@ let isFavourite = false;
 let orderData = null;
 let currentUserId = null;
 
+let dark = localStorage.getItem("darkMode") === "true";
+
+function applyDarkModeState() {
+    document.body.classList.toggle("dark-mode", dark);
+    updateIcons(dark);
+}
+
+function updateIcons(isDark) {
+    const desktopIcon = document.getElementById("desktopIcon");
+    const mobileIcon = document.getElementById("mobileIcon");
+    const desktopText = document.querySelector("#darkToggleDesktop span");
+
+    if (!desktopIcon || !mobileIcon || !desktopText) return;
+
+    if (isDark) {
+        desktopIcon.innerHTML =
+            '<path d="M12 4V2M12 22v-2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12H4M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/><circle cx="12" cy="12" r="5"/>';
+        mobileIcon.innerHTML = desktopIcon.innerHTML;
+        desktopText.textContent = "Day";
+    } else {
+        desktopIcon.innerHTML =
+            '<path d="M21 12.79A9 9 0 0111.21 3 7 7 0 1019 14.79z"/>';
+        mobileIcon.innerHTML = desktopIcon.innerHTML;
+        desktopText.textContent = "Night";
+    }
+}
+
+function toggleDark() {
+    dark = !dark;
+    localStorage.setItem("darkMode", dark);
+    applyDarkModeState();
+}
+
 async function loadNavbar() {
     const nav = document.getElementById("navbar");
     nav.style.display = "none";
@@ -202,6 +235,8 @@ async function loadNavbar() {
     nav.innerHTML = html;
     nav.style.display = "block";
 
+    applyDarkModeState();
+
     const h = document.getElementById("hamburger");
     if (h) {
         h.addEventListener("click", () => {
@@ -209,6 +244,12 @@ async function loadNavbar() {
             m.classList.toggle("open");
         });
     }
+
+    const desktopBtn = document.getElementById("darkToggleDesktop");
+    const mobileBtn = document.getElementById("darkToggleMobile");
+
+    if (desktopBtn) desktopBtn.onclick = toggleDark;
+    if (mobileBtn) mobileBtn.onclick = toggleDark;
 
     updateCartBadgeBackend();
 }
@@ -321,6 +362,10 @@ function addOrderButtons() {
         btn.onclick = () => markReceived(orderData.id);
         container.appendChild(btn);
     }
+
+    const address = document.createElement("p");
+    address.innerHTML = `<strong>Address:</strong> ${orderData.address}`;
+    container.appendChild(address);
 }
 
 async function markShipped(orderId) {

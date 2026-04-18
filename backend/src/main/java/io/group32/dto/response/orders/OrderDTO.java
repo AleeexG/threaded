@@ -15,6 +15,7 @@ public class OrderDTO {
     private double priceAtPurchase;
     private String sellerUsername;
     private String createdAt;
+    private String address;
 
     public static OrderDTO fromOrder(Order order) {
         OrderDTO dto = new OrderDTO();
@@ -33,6 +34,7 @@ public class OrderDTO {
         dto.setPriceAtPurchase(order.getPriceAtPurchase());
         dto.setSellerUsername(order.getListing().getUser().getUsername());
         dto.setCreatedAt(order.getCreatedAt().toString());
+        dto.setAddress(order.getAddress());
         return dto;
     }
 }
