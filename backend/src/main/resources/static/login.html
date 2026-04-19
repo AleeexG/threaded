@@ -110,6 +110,53 @@
             font-weight: 600;
         }
 
+        .forgot-link {
+            margin-top: 10px;
+            text-align: center;
+            color: #ff7ebf;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .help-modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .help-box {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 3px solid #ff7ebf;
+            width: 300px;
+            text-align: center;
+        }
+
+        .help-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .help-option {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid black;
+            background: #eee;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .help-option.active {
+            background: #ff7ebf;
+            color: black;
+        }
     </style>
 </head>
 <body>
@@ -125,7 +172,24 @@
     <button id="login-btn">Login</button>
     <button id="register-btn">Create Account</button>
 
+    <p class="forgot-link" onclick="document.getElementById('helpModal').style.display='flex'">Need help logging in?</p>
+
     <div id="message"></div>
+</div>
+
+<div id="helpModal" class="help-modal">
+    <div class="help-box">
+        <h3>Need help?</h3>
+
+        <div class="help-toggle">
+            <button id="forgotPasswordBtn" class="help-option active">Forgot Password</button>
+            <button id="forgotUsernameBtn" class="help-option">Forgot Username</button>
+        </div>
+
+        <input id="helpEmail" type="email" placeholder="Enter your email">
+
+        <button id="helpSubmit">Submit</button>
+    </div>
 </div>
 
 <script>
@@ -169,6 +233,48 @@
 
         setTimeout(() => window.location.href = "home.html", 800);
     };
+
+    let helpMode = "password";
+
+    document.getElementById("forgotPasswordBtn").onclick = () => {
+        helpMode = "password";
+        document.getElementById("forgotPasswordBtn").classList.add("active");
+        document.getElementById("forgotUsernameBtn").classList.remove("active");
+    };
+
+    document.getElementById("forgotUsernameBtn").onclick = () => {
+        helpMode = "username";
+        document.getElementById("forgotUsernameBtn").classList.add("active");
+        document.getElementById("forgotPasswordBtn").classList.remove("active");
+    };
+
+    document.getElementById("helpSubmit").onclick = async () => {
+        const email = document.getElementById("helpEmail").value.trim();
+        if (!email) return;
+
+        const endpoint = helpMode === "password"
+            ? "/api/auth/forgot-password"
+            : "/api/auth/forgot-username";
+
+        await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email })
+        });
+
+        document.getElementById("helpModal").style.display = "none";
+    };
+
+    document.addEventListener("click", e => {
+        const modal = document.getElementById("helpModal");
+        const box = document.querySelector(".help-box");
+
+        if (e.target.classList.contains("forgot-link")) return;
+
+        if (modal.style.display !== "none" && !box.contains(e.target)) {
+            modal.style.display = "none";
+        }
+    });
 </script>
 
 </body>

@@ -200,6 +200,25 @@
     </div>
 </div>
 
+<div id="fullscreenOverlay" style="
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+">
+    <img id="fullscreenImage" style="
+        max-width: 95%;
+        max-height: 95%;
+        border-radius: 12px;
+        border: 3px solid white;
+        touch-action: pinch-zoom;
+    ">
+</div>
+
 <script>
 let listingData = null;
 let images = [];
@@ -436,10 +455,16 @@ function nextImage() {
 }
 
 function openFullImage() {
-    if (images.length > 0) {
-        window.open(images[currentIndex], "_blank");
-    }
+    const overlay = document.getElementById("fullscreenOverlay");
+    const img = document.getElementById("fullscreenImage");
+    img.src = images[currentIndex];
+    overlay.style.display = "flex";
+    overlay.style.touchAction = "auto";
 }
+
+document.getElementById("fullscreenOverlay").onclick = () => {
+    document.getElementById("fullscreenOverlay").style.display = "none";
+};
 
 async function addToCart(redirect) {
     if (!listingData) return;
