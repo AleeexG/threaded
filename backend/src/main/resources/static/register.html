@@ -43,14 +43,29 @@
             font-weight: 600;
         }
 
+        .input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
         input {
             width: 100%;
-            padding: 10px;
+            padding: 10px 40px 10px 10px;
             margin: 8px 0;
             border-radius: 8px;
             border: 2px solid black;
             font-size: 14px;
             box-sizing: border-box;
+        }
+
+        .toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+            user-select: none;
         }
 
         button {
@@ -143,7 +158,11 @@
 
     <input id="email" type="email" placeholder="Email">
     <input id="username" type="text" placeholder="Username">
-    <input id="password" type="password" placeholder="Password">
+
+    <div class="input-wrapper">
+        <input id="password" type="password" placeholder="Password">
+        <span id="toggleIcon" class="toggle" onclick="togglePassword()">🙈</span>
+    </div>
 
     <label class="consent-wrap">
         <input type="checkbox" id="consentCheckbox">
@@ -168,6 +187,19 @@
 
 <script>
     const msg = document.getElementById("message");
+
+    function togglePassword() {
+        const p = document.getElementById("password");
+        const icon = document.getElementById("toggleIcon");
+
+        if (p.type === "password") {
+            p.type = "text";
+            icon.textContent = "🙉";
+        } else {
+            p.type = "password";
+            icon.textContent = "🙈";
+        }
+    }
 
     function show(text, type = "error") {
         msg.textContent = text;
