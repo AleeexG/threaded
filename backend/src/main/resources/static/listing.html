@@ -6,6 +6,12 @@
     <title>Listing Details</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
 
+    <script>
+        if (localStorage.getItem("darkMode") === "true") {
+            document.documentElement.classList.add("dark-mode");
+        }
+    </script>
+
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -44,7 +50,7 @@
             color:#ccc;
         }
 
-        .carousel-container {
+        .listing-page .carousel-container {
             position: relative;
             width: 100%;
             max-width: 900px;
@@ -54,7 +60,7 @@
             align-items: center;
         }
 
-        .carousel-image {
+        .listing-page .carousel-image {
             max-width: 100%;
             max-height: 650px;
             object-fit: contain;
@@ -158,7 +164,7 @@
     <link rel="stylesheet" href="/responsive.css">
 
 </head>
-<body>
+<body class="listing-page">
 
 <div id="navbar"></div>
 
@@ -205,7 +211,7 @@ let currentUserId = null;
 let dark = localStorage.getItem("darkMode") === "true";
 
 function applyDarkModeState() {
-    document.body.classList.toggle("dark-mode", dark);
+    document.documentElement.classList.toggle("dark-mode", dark);
     updateIcons(dark);
 }
 
@@ -506,6 +512,23 @@ async function addToFavourites() {
         updateFavouriteUI();
     }
 }
+
+let startX = 0;
+const carousel = document.getElementById("carouselImage");
+
+carousel.addEventListener("touchstart", (e) => {
+    startX = e.touches[0].clientX;
+});
+
+carousel.addEventListener("touchend", (e) => {
+    const endX = e.changedTouches[0].clientX;
+
+    if (endX < startX - 50) {
+        nextImage();
+    } else if (endX > startX + 50) {
+        prevImage();
+    }
+});
 
 loadNavbar();
 loadListing();

@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Messages</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <script>
+        if (localStorage.getItem("darkMode") === "true") {
+            document.documentElement.classList.add("dark-mode");
+        }
+    </script>
+
     <style>
         body { font-family: 'Poppins', sans-serif; background: #fafafa; margin: 0; padding: 0; }
         .container { max-width: 900px; margin: 30px auto; background: white; padding: 20px; border-radius: 12px; border: 3px solid #ff7ebf; }
@@ -51,7 +58,7 @@ async function updateCartCount() {
 let dark = localStorage.getItem("darkMode") === "true";
 
 function applyDarkModeState() {
-    document.body.classList.toggle("dark-mode", dark);
+    document.documentElement.classList.toggle("dark-mode", dark);
     updateIcons(dark);
 }
 
