@@ -111,8 +111,13 @@
 
         .meta {
             color: #444;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             font-weight: 600;
+        }
+
+        #sellerName {
+            font-weight: 700;
+            margin-bottom: 20px;
         }
 
         .actions {
@@ -174,6 +179,7 @@
     <div id="price" class="price"></div>
     <div id="soldBadge">SOLD</div>
     <div id="meta" class="meta"></div>
+    <div id="sellerName"></div>
     <p id="description"></p>
 
     <div class="actions" id="actionButtons">
@@ -313,6 +319,9 @@ async function loadListing() {
 
     document.getElementById("meta").textContent =
         `${listing.brand} • Size ${listing.size} • ${listing.itemCondition} • ${listing.category}`;
+
+    document.getElementById("sellerName").textContent =
+        "Seller: " + listing.user.username;
 
     if (listing.images && listing.images.length > 0) {
         images = listing.images.map(i => i.imageUrl);

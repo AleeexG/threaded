@@ -174,7 +174,6 @@ async function updateCartCount() {
     if (desktopEl) desktopEl.textContent = count;
     if (mobileEl) mobileEl.textContent = count;
 }
-
 </script>
 
 <script>
@@ -246,13 +245,6 @@ fetch("/navbar.html")
     <input id="price" type="number" placeholder="Price (£)" step="0.01">
 
     <input id="brand" type="text" placeholder="Brand">
-    <input id="size" type="text" placeholder="Size">
-
-    <select id="condition">
-        <option value="">Select Condition</option>
-        <option value="NEW">New</option>
-        <option value="USED">Used</option>
-    </select>
 
     <select id="category">
         <option value="">Select Category</option>
@@ -261,6 +253,14 @@ fetch("/navbar.html")
         <option value="ACCESSORIES">Accessories</option>
         <option value="SPORTSWEAR">Sportswear</option>
         <option value="OTHER">Other</option>
+    </select>
+
+    <select id="size"></select>
+
+    <select id="condition">
+        <option value="">Select Condition</option>
+        <option value="NEW">New</option>
+        <option value="USED">Used</option>
     </select>
 
     <h3 style="font-weight:600; margin-top:20px; font-size:16px;">Existing Images</h3>
@@ -289,6 +289,33 @@ function showMessage(text, type="error") {
     box.className = "message " + type;
 }
 
+const categorySelect = document.getElementById("category");
+const sizeSelect = document.getElementById("size");
+
+function updateSizes() {
+    const cat = categorySelect.value;
+    sizeSelect.innerHTML = "";
+
+    let sizes = [];
+
+    if (cat === "FOOTWEAR") {
+        sizes = ["5","6","7","8","9","10","11","12"];
+    } else {
+        sizes = ["XXS","XS","S","M","L","XL","XXL"];
+    }
+
+    sizes.forEach(s => {
+        const opt = document.createElement("option");
+        opt.value = s;
+        opt.textContent = s;
+        sizeSelect.appendChild(opt);
+    });
+}
+
+categorySelect.addEventListener("change", () => {
+    updateSizes();
+});
+
 async function loadListing() {
     const params = new URLSearchParams(window.location.search);
     listingId = params.get("id");
@@ -303,9 +330,11 @@ async function loadListing() {
     document.getElementById("description").value = listing.description;
     document.getElementById("price").value = listing.price;
     document.getElementById("brand").value = listing.brand;
-    document.getElementById("size").value = listing.size;
     document.getElementById("condition").value = listing.itemCondition;
     document.getElementById("category").value = listing.category;
+
+    updateSizes();
+    document.getElementById("size").value = listing.size;
 
     const container = document.getElementById("existingImages");
 

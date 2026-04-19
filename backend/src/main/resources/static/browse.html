@@ -237,31 +237,6 @@ fetch("/navbar.html")
     <div class="search-bar">
 
         <div class="top-row">
-            <select id="size">
-                <option value="">Size</option>
-                <option value="XS">XS</option>
-                <option value="S">S</option>
-                <option value="M">M</option>
-                <option value="L">L</option>
-                <option value="XL">XL</option>
-                <option value="XXL">XXL</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-            </select>
-
-            <select id="condition">
-                <option value="">Condition</option>
-                <option value="NEW">New</option>
-                <option value="USED">Used</option>
-            </select>
 
             <select id="category">
                 <option value="">Category</option>
@@ -270,6 +245,14 @@ fetch("/navbar.html")
                 <option value="ACCESSORIES">Accessories</option>
                 <option value="SPORTSWEAR">Sportswear</option>
                 <option value="OTHER">Other</option>
+            </select>
+
+            <select id="size"></select>
+
+            <select id="condition">
+                <option value="">Condition</option>
+                <option value="NEW">New</option>
+                <option value="USED">Used</option>
             </select>
 
             <select id="sortBy">
@@ -297,6 +280,37 @@ fetch("/navbar.html")
 <script>
     let currentPage = 0;
     const pageSize = 12;
+
+    const categorySelect = document.getElementById("category");
+    const sizeSelect = document.getElementById("size");
+
+    function updateSizes() {
+        const cat = categorySelect.value;
+        sizeSelect.innerHTML = "";
+
+        let sizes = [];
+
+        if (cat === "FOOTWEAR") {
+            sizes = ["5","6","7","8","9","10","11","12"];
+        } else {
+            sizes = ["XXS","XS","S","M","L","XL","XXL"];
+        }
+
+        const defaultOpt = document.createElement("option");
+        defaultOpt.value = "";
+        defaultOpt.textContent = "Size";
+        sizeSelect.appendChild(defaultOpt);
+
+        sizes.forEach(s => {
+            const opt = document.createElement("option");
+            opt.value = s;
+            opt.textContent = s;
+            sizeSelect.appendChild(opt);
+        });
+    }
+
+    categorySelect.addEventListener("change", updateSizes);
+    updateSizes();
 
     function applyFilters() {
         currentPage = 0;

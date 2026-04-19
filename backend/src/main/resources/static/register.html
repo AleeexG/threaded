@@ -110,6 +110,28 @@
             font-weight: 600;
         }
 
+        .consent-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            text-align: left;
+        }
+
+        .consent-info {
+            text-align: left;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .consent-info ul {
+            padding-left: 18px;
+            margin: 6px 0 0 0;
+        }
+
+        .consent-info li {
+            margin-bottom: 4px;
+        }
     </style>
 </head>
 <body>
@@ -122,6 +144,21 @@
     <input id="email" type="email" placeholder="Email">
     <input id="username" type="text" placeholder="Username">
     <input id="password" type="password" placeholder="Password">
+
+    <label class="consent-wrap">
+        <input type="checkbox" id="consentCheckbox">
+        <span>I agree to the Project Terms and Conditions</span>
+    </label>
+
+    <div class="consent-info">
+        <p>By ticking this box, I confirm that:</p>
+        <ul>
+            <li>I am over 18, capable of giving informed consent, and located in the UK.</li>
+            <li>I understand this is a University of Liverpool student project and my participation is voluntary.</li>
+            <li>I consent to my data being stored securely for evaluation purposes.</li>
+            <li>I am aware I can withdraw at any time by emailing threadedmailbox@gmail.com</li>
+        </ul>
+    </div>
 
     <button id="register-btn">Register</button>
     <button id="login-btn" onclick="window.location.href='login.html'">Back to Login</button>
@@ -141,9 +178,15 @@
         const email = document.getElementById("email").value.trim();
         const username = document.getElementById("username").value.trim();
         const password = document.getElementById("password").value.trim();
+        const consent = document.getElementById("consentCheckbox").checked;
 
         if (!email || !username || !password) {
             show("All fields are required.", "error");
+            return;
+        }
+
+        if (!consent) {
+            show("You must agree to the Project Terms and Conditions.", "error");
             return;
         }
 
