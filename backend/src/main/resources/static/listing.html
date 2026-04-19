@@ -179,7 +179,11 @@
     <div id="price" class="price"></div>
     <div id="soldBadge">SOLD</div>
     <div id="meta" class="meta"></div>
-    <div id="sellerName"></div>
+
+    <div id="sellerName">
+        Seller: <a id="sellerLink" class="seller-link"></a>
+    </div>
+
     <p id="description"></p>
 
     <div class="actions" id="actionButtons">
@@ -320,8 +324,8 @@ async function loadListing() {
     document.getElementById("meta").textContent =
         `${listing.brand} • Size ${listing.size} • ${listing.itemCondition} • ${listing.category}`;
 
-    document.getElementById("sellerName").textContent =
-        "Seller: " + listing.user.username;
+    document.getElementById("sellerLink").textContent = listing.user.username;
+    document.getElementById("sellerLink").href = `/user-profile.html?user=${listing.user.id}`;
 
     if (listing.images && listing.images.length > 0) {
         images = listing.images.map(i => i.imageUrl);

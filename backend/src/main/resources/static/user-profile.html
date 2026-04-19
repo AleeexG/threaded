@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>User Profile</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #fafafa;
+            margin: 0;
+            padding: 0;
+            color: black;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            border: 3px solid #ff7ebf;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .rating-box {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .stats {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .message-btn {
+            display: block;
+            margin: 25px auto;
+            padding: 12px 20px;
+            background: #ff7ebf;
+            border: 2px solid black;
+            color: black;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 25px;
+            margin-top: 35px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            border: 3px solid #ff7ebf;
+            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+
+        .card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid black;
+        }
+
+        .card h3 {
+            margin: 10px 0 5px 0;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .card p {
+            margin: 4px 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .reviews-title {
+            margin-top: 40px;
+            font-size: 26px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .review {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f7f7f7;
+            border-radius: 10px;
+            border: 2px solid black;
+        }
+
+        .review-score {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ff7ebf;
+        }
+
+        .review-text {
+            margin-top: 8px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .review-user {
+            margin-top: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #444;
+        }
+    </style>
+
+    <link rel="stylesheet" href="/responsive.css">
+</head>
+<body>
+
+<div id="navbar"></div>
+
+<div class="container">
+    <h2 id="username"></h2>
+    <div id="rating" class="rating-box"></div>
+    <div id="stats" class="stats"></div>
+    <button id="messageBtn" class="message-btn">Message Seller</button>
+    <div id="listingsGrid" class="grid"></div>
+
+    <div class="reviews-title">Seller Reviews</div>
+    <div id="reviewsContainer"></div>
+</div>
+
+<script>
+let sellerId = null;
+let currentUserId = null;
+
+let dark = localStorage.getItem("darkMode") === "true";
+
+function applyDarkModeState() {
+    document.body.classList.toggle("dark-mode", dark);
+    updateIcons(dark);
+}
+
+function updateIcons(isDark) {
+    const desktopIcon = document.getElementById("desktopIcon");
+    const mobileIcon = document.getElementById("mobileIcon");
+    const desktopText = document.querySelector("#darkToggleDesktop span");
+    if (!desktopIcon || !mobileIcon || !desktopText) return;
+    if (isDark) {
+        desktopIcon.innerHTML =
+            '<path d="M12 4V2M12 22v-2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12H4M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/><circle cx="12" cy="12" r="5"/>';
+        mobileIcon.innerHTML = desktopIcon.innerHTML;
+        desktopText.textContent = "Day";
+    } else {
+        desktopIcon.innerHTML =
+            '<path d="M21 12.79A9 9 0 0111.21 3 7 7 0 1019 14.79z"/>';
+        mobileIcon.innerHTML = desktopIcon.innerHTML;
+        desktopText.textContent = "Night";
+    }
+}
+
+function toggleDark() {
+    dark = !dark;
+    localStorage.setItem("darkMode", dark);
+    applyDarkModeState();
+}
+
+async function loadNavbar() {
+    const nav = document.getElementById("navbar");
+    nav.style.display = "none";
+    const res = await fetch("/navbar.html");
+    const html = await res.text();
+    nav.innerHTML = html;
+    nav.style.display = "block";
+    applyDarkModeState();
+    const h = document.getElementById("hamburger");
+    if (h) {
+        h.addEventListener("click", () => {
+            const m = document.getElementById("mobileMenu");
+            m.classList.toggle("open");
+        });
+    }
+    const desktopBtn = document.getElementById("darkToggleDesktop");
+    const mobileBtn = document.getElementById("darkToggleMobile");
+    if (desktopBtn) desktopBtn.onclick = toggleDark;
+    if (mobileBtn) mobileBtn.onclick = toggleDark;
+}
+
+async function loadCurrentUser() {
+    const res = await fetch("/api/session/me", { credentials: "include" });
+    if (!res.ok) return;
+    const data = await res.json();
+    currentUserId = data.id;
+}
+
+async function loadSellerInfo() {
+    const res = await fetch(`/api/users/${sellerId}`, { credentials: "include" });
+    if (!res.ok) return;
+    const data = await res.json();
+    document.getElementById("username").textContent = data.username;
+}
+
+async function loadRatings() {
+    const res = await fetch(`/api/ratings/seller/${sellerId}`, { credentials: "include" });
+    if (!res.ok) {
+        document.getElementById("rating").textContent = "No ratings yet";
+        return;
+    }
+    const data = await res.json();
+    const count = data.count || 0;
+    if (count === 0 || !data.average) {
+        document.getElementById("rating").textContent = "No ratings yet";
+        return;
+    }
+    const avg = data.average.toFixed(1);
+    document.getElementById("rating").textContent = avg + " ★ (" + count + ")";
+}
+
+async function loadStats() {
+    const res = await fetch(`/api/listings/user/${sellerId}`, { credentials: "include" });
+    if (!res.ok) {
+        document.getElementById("stats").textContent = "";
+        return;
+    }
+    const listings = await res.json();
+    const active = listings.filter(l => l.listingStatus === "ACTIVE").length;
+    const sold = listings.filter(l => l.listingStatus === "SOLD").length;
+    document.getElementById("stats").textContent =
+        "Active Listings: " + active + " • Sold: " + sold;
+}
+
+async function loadListings() {
+    const res = await fetch(`/api/listings/user/${sellerId}`, { credentials: "include" });
+    if (!res.ok) return;
+    const listings = await res.json();
+    const grid = document.getElementById("listingsGrid");
+    grid.innerHTML = "";
+    listings.forEach(listing => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.onclick = () => window.location.href = `/listing.html?id=${listing.id}`;
+        const img =
+            listing.images && listing.images.length > 0
+                ? listing.images[0].imageUrl
+                : "/placeholder.png";
+        card.innerHTML = `
+            <img src="${img}">
+            <h3>${listing.title}</h3>
+            <p>£${listing.price}</p>
+            <p>${listing.itemCondition} • ${listing.category}</p>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+async function loadReviews() {
+    const res = await fetch(`/api/ratings/seller/${sellerId}`, { credentials: "include" });
+    if (!res.ok) return;
+    const data = await res.json();
+    const container = document.getElementById("reviewsContainer");
+    container.innerHTML = "";
+    if (!data.ratings || data.ratings.length === 0) {
+        container.innerHTML = "<p style='text-align:center;font-weight:600;margin-top:10px;'>No reviews yet</p>";
+        return;
+    }
+    data.ratings.forEach(r => {
+        const div = document.createElement("div");
+        div.className = "review";
+        div.innerHTML = `
+            <div class="review-score">${"★".repeat(r.score)}</div>
+            <div class="review-text">${r.review || ""}</div>
+            <div class="review-user">Buyer: ${r.buyer.username}</div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function setupMessageButton() {
+    const btn = document.getElementById("messageBtn");
+    if (currentUserId && currentUserId === sellerId) {
+        btn.style.display = "none";
+        return;
+    }
+    btn.onclick = () => {
+        window.location.href = `/messages.html?seller=${sellerId}`;
+    };
+}
+
+async function init() {
+    await loadNavbar();
+    await loadCurrentUser();
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get("user");
+    sellerId = raw ? parseInt(raw) : null;
+    if (!sellerId) {
+        document.getElementById("username").textContent = "User not found";
+        return;
+    }
+    await loadSellerInfo();
+    await loadRatings();
+    await loadStats();
+    await loadListings();
+    await loadReviews();
+    setupMessageButton();
+}
+
+init();
+</script>
+
+</body>
+</html>

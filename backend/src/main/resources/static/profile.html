@@ -182,6 +182,8 @@ fetch("/navbar.html")
     <p><strong>Username:</strong> <span id="username">Loading...</span></p>
     <p><strong>Email:</strong> <span id="email">Loading...</span></p>
 
+    <button id="myListingsBtn">My Listings</button>
+
     <p><strong>Two-Factor Authentication:</strong></p>
 
     <div class="toggle-box">
@@ -195,64 +197,69 @@ fetch("/navbar.html")
 </div>
 
 <script>
-    const toggleBtn = document.getElementById("toggle-btn");
-    const statusText = document.getElementById("twofa-status");
-    const messageBox = document.getElementById("message");
+const toggleBtn = document.getElementById("toggle-btn");
+const statusText = document.getElementById("twofa-status");
+const messageBox = document.getElementById("message");
+const myListingsBtn = document.getElementById("myListingsBtn");
 
-    let twoFactorEnabled = false;
+let twoFactorEnabled = false;
+let currentUserId = null;
 
-    function updateStatus() {
-        statusText.textContent = twoFactorEnabled ? "Enabled" : "Disabled";
+function updateStatus() {
+    statusText.textContent = twoFactorEnabled ? "Enabled" : "Disabled";
+}
+
+function showMessage(text, type="error") {
+    messageBox.textContent = text;
+    messageBox.className = "message " + type;
+}
+
+toggleBtn.onclick = async () => {
+    const newState = !twoFactorEnabled;
+
+    const res = await fetch("/api/auth/toggle-two-factor", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ enabled: newState })
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+        showMessage(data.message, "error");
+        return;
     }
 
-    function showMessage(text, type="error") {
-        messageBox.textContent = text;
-        messageBox.className = "message " + type;
-    }
-
-    toggleBtn.onclick = async () => {
-        const newState = !twoFactorEnabled;
-
-        const res = await fetch("/api/auth/toggle-two-factor", {
-            method: "POST",
-            credentials: "include",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ enabled: newState })
-        });
-
-        const data = await res.json();
-
-        if (!data.success) {
-            showMessage(data.message, "error");
-            return;
-        }
-
-        twoFactorEnabled = newState;
-        updateStatus();
-        showMessage(data.message, "success");
-    };
-
-    function logout() {
-        document.cookie = "JSESSIONID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        window.location.href = "/login.html";
-    }
-
+    twoFactorEnabled = newState;
     updateStatus();
+    showMessage(data.message, "success");
+};
+
+function logout() {
+    document.cookie = "JSESSIONID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    window.location.href = "/login.html";
+}
+
+updateStatus();
 </script>
 
 <script>
 async function loadProfile() {
-    const res = await fetch("/api/auth/me", {
+    const res = await fetch("/api/session/me", {
         credentials: "include"
     });
 
     const data = await res.json();
 
-    if (data.success) {
-        document.getElementById("username").textContent = data.data.username;
-        document.getElementById("email").textContent = data.data.email;
-        twoFactorEnabled = data.data.twoFactorEnabled;
-        updateStatus();
+    if (data && data.id) {
+        currentUserId = data.id;
+        document.getElementById("username").textContent = data.username;
+        document.getElementById("email").textContent = data.email;
+
+        myListingsBtn.onclick = () => {
+            window.location.href = `/user-profile.html?user=${currentUserId}`;
+        };
     }
 }
 
