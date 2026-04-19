@@ -67,7 +67,7 @@
 }
 
 button {
-    color: black !important;
+    color: black;
     -webkit-appearance: none;
     appearance: none;
 }
@@ -96,8 +96,6 @@ img, svg {
     align-items: center;
     gap: 6px;
 }
-
-.darkModeToggle { color: #ff7ebf !important; }
 
 .darkModeToggle svg {
     width: 20px;
@@ -161,29 +159,133 @@ img, svg {
     font-size: 15px;
 }
 
-body.dark-mode { background: #1a1a1a; color: #e0e0e0; transition: .3s; }
-.dark-mode .navbar, .dark-mode .mobile-nav { background: #252525; border-color: #444; }
-.dark-mode .navbar h1, .dark-mode .mobile-logo, .dark-mode .nav-links a, .dark-mode .mobile-menu a { color: #e0e0e0; }
-.dark-mode .mobile-menu { background: #1f1f1f; border-color: #333; }
-.dark-mode .mobile-menu a { border-color: #333; }
-.dark-mode .basket-icon path, .dark-mode .basket-icon line { stroke: #ff7ebf; }
-.dark-mode .cart-count { background: #ff7ebf; border-color: #1f1f1f; }
-.dark-mode button { background: #333; color: #e0e0e0; border-color: #555; }
-.dark-mode button:hover { background: #444; }
+body.dark-mode {
+    background: #2a2a2a;
+    color: #f5f5f5;
+    transition: .3s;
+}
 
-.dark-mode .darkModeToggle {
-    background: #ff7ebf;
-    color: black !important;
+.dark-mode .navbar h1 {
+    color: black;
+}
+
+.dark-mode .container,
+.dark-mode .login-box,
+.dark-mode .register-box,
+.dark-mode .reset-box,
+.dark-mode .mobile-menu,
+.dark-mode #dropZone,
+.dark-mode .messages-box,
+.dark-mode .order,
+.dark-mode .toggle-box {
+    background: #3a3a3a;
+    color: #ffffff;
+    border-color: #555;
+}
+
+.dark-mode .listing-card {
+    background: #3a3a3a;
     border-color: #ff7ebf;
 }
 
-.dark-mode .darkModeToggle svg {
-    stroke: black;
+.dark-mode .listing-card *,
+.dark-mode .listing-card .price,
+.dark-mode .listing-card h4 {
+    color: #ffffff;
 }
 
-.dark-mode .listing-card, .dark-mode .login-box, .dark-mode .register-box { background: #252525; border-color: #444; color: #e0e0e0; }
-.dark-mode h1, .dark-mode h2, .dark-mode h3 { color: #fff; }
-.dark-mode input, .dark-mode textarea, .dark-mode select { background: #2a2a2a; color: #e0e0e0; border-color: #555; }
+.dark-mode .listing {
+    background: #3a3a3a;
+    border: 3px solid #ff7ebf;
+    border-radius: 12px;
+}
+
+.dark-mode .listing *,
+.dark-mode .listing .price,
+.dark-mode .listing h4 {
+    color: #ffffff;
+}
+
+.dark-mode .listing-item {
+    background: #3a3a3a;
+    border: 3px solid #ff7ebf;
+    border-radius: 12px;
+}
+
+.dark-mode .listing-item *,
+.dark-mode .listing-item h4,
+.dark-mode .listing-item .price {
+    color: #ffffff;
+}
+
+.dark-mode .card {
+    background: #3a3a3a;
+    border: 3px solid #ff7ebf;
+}
+
+.dark-mode .card *,
+.dark-mode .card h3,
+.dark-mode .card p {
+    color: #ffffff;
+}
+
+.dark-mode .card img {
+    border: 2px solid black;
+}
+
+.dark-mode .details,
+.dark-mode .details *,
+.dark-mode .info,
+.dark-mode .info *,
+.dark-mode .meta,
+.dark-mode .meta *,
+.dark-mode .listing-info,
+.dark-mode .listing-info *,
+.dark-mode .sub-info,
+.dark-mode .sub-info *,
+.dark-mode .price-info,
+.dark-mode .price-info *,
+.dark-mode .category,
+.dark-mode .category * {
+    color: #ffffff;
+}
+
+.dark-mode .message-preview {
+    background: #3a3a3a;
+    border: 2px solid #555;
+    color: #ffffff;
+}
+
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3 {
+    color: #ffffff;
+}
+
+.dark-mode input,
+.dark-mode textarea,
+.dark-mode select {
+    background: #4a4a4a;
+    color: #ffffff;
+    border-color: #666;
+}
+
+.dark-mode .mobile-menu a {
+    color: #ffffff;
+    border-color: #555;
+}
+
+.dark-mode #hamburger {
+    color: black !important;
+}
+
+.dark-mode .mobile-logo {
+    color: black !important;
+}
+
+.dark-mode .message {
+    color: #ffffff;
+}
 
 .pagination button {
     background: #ff7ebf;
