@@ -4,6 +4,7 @@ import io.group32.model.Rating;
 import io.group32.service.RatingService;
 import io.group32.service.SessionService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -44,5 +45,19 @@ public class RatingController {
         res.put("average", ratingService.getAverage(sellerId));
         res.put("count", ratingService.getCount(sellerId));
         return res;
+    }
+
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<?> getRatingForOrder(@PathVariable Long orderId) {
+        Rating rating = ratingService.getRatingByOrderId(orderId);
+        if (rating == null) {
+            return ResponseEntity.status(404).body(null);
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("score", rating.getScore());
+        map.put("review", rating.getReview());
+        map.put("createdAt", rating.getCreatedAt());
+        return ResponseEntity.ok(map);
     }
 }

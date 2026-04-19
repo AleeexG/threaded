@@ -277,7 +277,10 @@ async function loadOrders() {
         return;
     }
 
-    data.data.forEach(order => {
+    for (const order of data.data) {
+        const ratingRes = await fetch(`/api/ratings/order/${order.id}`, { credentials: "include" });
+        const rating = ratingRes.ok ? await ratingRes.json() : null;
+
         const div = document.createElement("div");
         div.className = "order";
 
@@ -291,9 +294,11 @@ async function loadOrders() {
             actionButton = `<button class="btn receive-btn" onclick="markReceived(${order.id})">Mark as Received</button>`;
         }
 
-        if (order.status === "RECEIVED" && order.buyerId === currentUserId && !order.rated) {
+        if (order.status === "RECEIVED" && order.buyerId === currentUserId && !rating) {
             actionButton = `<button class="btn rate-btn" onclick="openRating(${order.id})">Rate Seller</button>`;
         }
+
+        const ratingDisplay = rating ? `<p><strong>Your Rating:</strong> ${"★".repeat(rating.score)}</p>` : "";
 
         div.innerHTML = `
             <img src="${order.mainImageUrl}" alt="Listing">
@@ -304,12 +309,13 @@ async function loadOrders() {
                 <p><strong>Date:</strong> ${new Date(order.createdAt).toLocaleDateString()}</p>
                 <p><strong>Address:</strong> ${order.address}</p>
                 <p class="status"><strong>Status:</strong> ${order.status}</p>
+                ${ratingDisplay}
                 ${actionButton}
             </div>
         `;
 
         container.appendChild(div);
-    });
+    }
 }
 
 function openListing(listingId, orderId) {

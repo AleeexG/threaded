@@ -57,10 +57,20 @@ public class RatingService {
             buyer.put("username", r.getBuyer().getUsername());
             map.put("buyer", buyer);
 
+            Map<String, Object> listing = new HashMap<>();
+            listing.put("id", r.getOrder().getListing().getId());
+            listing.put("title", r.getOrder().getListing().getTitle());
+            listing.put("image", r.getOrder().getListing().getImages().get(0).getImageUrl());
+            map.put("listing", listing);
+
             list.add(map);
         }
 
         return list;
+    }
+
+    public Rating getRatingByOrderId(Long orderId) {
+        return ratingRepository.findByOrderId(orderId).orElse(null);
     }
 
     public Double getAverage(Long sellerId) {

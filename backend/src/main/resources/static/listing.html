@@ -302,6 +302,7 @@ async function loadListing() {
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
     const fromOrders = params.get("fromOrders") === "true";
+    const fromProfileReview = params.get("fromProfileReview") === "true";
     const orderId = params.get("orderId");
 
     if (fromOrders && orderId) {
@@ -343,6 +344,18 @@ async function loadListing() {
         addBtn.style.opacity = "0.4";
         buyBtn.style.cursor = "not-allowed";
         addBtn.style.cursor = "not-allowed";
+    }
+
+    if (fromProfileReview) {
+        document.querySelector(".btn-buy").style.display = "none";
+        document.querySelector(".btn-add").style.display = "none";
+        document.querySelector(".btn-fav").style.display = "none";
+
+        if (currentUserId === listing.user.id) {
+            document.querySelector(".btn-message").style.display = "none";
+        }
+
+        return;
     }
 
     if (fromOrders) {
